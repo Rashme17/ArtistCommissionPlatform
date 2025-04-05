@@ -1,0 +1,6 @@
+ras|ras@gmail.com|12345678|client
+ras|ras@gmail.com|12345678|client
+ras|ras@gmail.com|12345678|client
+rash|rash@gmail.com|12345678|artist
+rashh|rashh@gmail.com|123456|artist
+rashh|rashh@gmail.com|123456|artist

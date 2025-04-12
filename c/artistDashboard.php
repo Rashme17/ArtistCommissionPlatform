@@ -1,13 +1,8 @@
 <?php
 session_start();
-if (!isset($_SESSION['username'])) {
-    header("Location: login.html");
-    exit();
-}
-
-$username = $_SESSION['username'];
+$username = $_SESSION['username'] ?? 'Guest';
 $sessionID = session_id();
-$lastLogin = $_SESSION['lastLogin'] ?? date("Y-m-d H:i:s");
+$lastLogin = $_SESSION['lastLogin'] ?? 'Not Available';
 ?>
 
 <!DOCTYPE html>
@@ -15,13 +10,14 @@ $lastLogin = $_SESSION['lastLogin'] ?? date("Y-m-d H:i:s");
 <head>
     <title>Artist Dashboard</title>
     <style>
-        .artwork-box {
+        .artwork {
             border: 1px solid #ccc;
-            padding: 10px;
-            margin: 10px 0;
+            padding: 15px;
+            margin: 15px 0;
+            width: 350px;
         }
-        .artwork-box img {
-            width: 150px;
+        .artwork img {
+            width: 100%;
             height: auto;
         }
     </style>
@@ -41,35 +37,34 @@ $lastLogin = $_SESSION['lastLogin'] ?? date("Y-m-d H:i:s");
 <h3>Your Portfolio</h3>
 
 <?php
-$xmlFile = "D:/xampp/tomcat/webapps/ArtistMarket/xml/artworks.xml";
+$xmlFile = "D:/xampp/tomcat/webapps/ArtistMarket/xml/artworks.xml"; // or move this to htdocs/xml/artworks.xml for better access
 if (file_exists($xmlFile)) {
     $doc = new DOMDocument();
     $doc->load($xmlFile);
     $artworks = $doc->getElementsByTagName("artwork");
 
     foreach ($artworks as $art) {
-        $name = getTagText($art, "name");
-        $desc = getTagText($art, "desc");
-        $category = getTagText($art, "category");
-        $price = getTagText($art, "price");
-        $image = getTagText($art, "image");
+        $name = getTag($art, "name");
+        $desc = getTag($art, "desc");
+        $category = getTag($art, "category");
+        $price = getTag($art, "price");
+        $image = getTag($art, "image");
 
-        echo "<div class='artwork-box'>";
+        echo "<div class='artwork'>";
         echo "<h3>" . htmlspecialchars($name) . "</h3>";
-        echo "<img src='images/" . htmlspecialchars($image) . "' alt='Artwork Image' />";
-        echo "<p>" . htmlspecialchars($desc) . "</p>";
-        echo "<p>Category: " . htmlspecialchars($category) . "</p>";
-        echo "<p>Price: ₹" . htmlspecialchars($price) . "</p>";
+        echo "<img src='/" . htmlspecialchars($image) . "' alt='Artwork Image'>";
+        echo "<p><strong>Description:</strong> " . htmlspecialchars($desc) . "</p>";
+        echo "<p><strong>Category:</strong> " . htmlspecialchars($category) . "</p>";
+        echo "<p><strong>Price:</strong> ₹" . htmlspecialchars($price) . "</p>";
         echo "</div>";
     }
 } else {
     echo "<p>No artworks found.</p>";
 }
 
-// Helper function to safely get tag text
-function getTagText($parent, $tag) {
-    $nodeList = $parent->getElementsByTagName($tag);
-    return ($nodeList->length > 0) ? $nodeList->item(0)->textContent : "N/A";
+function getTag($parent, $tag) {
+    $node = $parent->getElementsByTagName($tag);
+    return ($node->length > 0) ? $node->item(0)->textContent : "N/A";
 }
 ?>
 
